@@ -21,9 +21,6 @@ class Inputs extends React.Component{
 			predictedProduction:0.0,
 		};
 	}
-	
-	//this.changeHandler=this.changeHandler.bind(this);
-	//this.submitHandler=this.submitHandler.bind(this);
 
 	stateNameHandler = (event) => {
 		let stateName=event.target.value;
@@ -62,7 +59,7 @@ class Inputs extends React.Component{
 		let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
-        headers.append('Origin','http://localhost:3000');
+        headers.append('Origin','https://crop-yield-prediction-adbc8.firebaseapp.com/');//
 
         console.log("Ready to Send Request");
 
