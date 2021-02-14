@@ -59,7 +59,7 @@ class Inputs extends React.Component{
 		let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
-        headers.append('Origin','https://crop-yield-prediction-adbc8.firebaseapp.com','https://crop-yield-prediction-adbc8.web.app/');//
+        headers.append('Origin','https://crop-yield-prediction-4e988.web.app');
 
         console.log("Ready to Send Request");
 
@@ -150,7 +150,6 @@ class Inputs extends React.Component{
               </form>
               <div>
 			    <h2>Predicted Rice Crop Production  is : {this.state.predictedProduction}</h2>
-			    <p>to check</p>
 			  </div>
 			</div>
 		);
