@@ -59,7 +59,7 @@ class Inputs extends React.Component{
 		let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
-        headers.append('Origin','https://crop-yield-prediction-adbc8.firebaseapp.com/');//
+        headers.append('Origin','https://crop-yield-prediction-adbc8.firebaseapp.com');//
 
         console.log("Ready to Send Request");
 
