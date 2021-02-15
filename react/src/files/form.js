@@ -1,4 +1,6 @@
 import React,{Component} from 'react';
+import axios from 'axios';
+
 
 class Inputs extends React.Component{
 	constructor(props){
@@ -56,14 +58,16 @@ class Inputs extends React.Component{
 		console.log("state");
 		console.log(this.state);
 		
+        console.log("Ready to Send Request");
+
+
+        //POST Request using fetch
 		let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
-        headers.append('Origin','https://crop-yield-prediction-4e988.web.app');
 
-        console.log("Ready to Send Request");
 
-		fetch('/inputData',{
+		fetch('https://cyp-mproject.herokuapp.com/inputData',{
 			method: "POST",
             headers: headers,
             body: JSON.stringify(this.state),
@@ -80,6 +84,22 @@ class Inputs extends React.Component{
 		.catch(function (error){
             console.log('Request failure: ', error);
          });
+
+         //POST request using axios
+        /*axios({
+           method: 'post',
+           url: '/inputData',
+           baseURL:'https://cyp-mproject.herokuapp.com',
+           data: this.state
+        })
+        .then(res => console.log(res))
+        .then(res => res.json())
+        .then(res => {
+        	console.log(res.data);
+        	console.log("Result",res.data.result);
+        	this.state.predictedProduction = res.data.result;
+        });*/
+
 	};
 
 
@@ -149,7 +169,7 @@ class Inputs extends React.Component{
                 </div>
               </form>
               <div>
-			    <h2>Predicted Rice Crop Production  is : {this.state.predictedProduction}</h2>
+			    <h2>Predicted Rice Crop Production for {this.state.inputs.area} cultivated area is : {this.state.predictedProduction}</h2>
 			  </div>
 			</div>
 		);
