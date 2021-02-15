@@ -29,7 +29,7 @@ class Inputs extends React.Component{
 		console.log("select = ",stateName);
 		let filePath='weights/';
 		filePath+=stateName
-		filePath+="_model.h5";
+		filePath+="_model.hdf5";
 		console.log("path=",filePath)
 		this.setState({
 			stateName:event.target.value,

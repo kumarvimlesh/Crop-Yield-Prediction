@@ -337,6 +337,7 @@ dict_file={'states':stateNames}
 print(dict_file)
 
 """# CNN-LSTM Model"""
+print("\n\n---------------------\nCNN-LSTM Model")
 
 clmodel = Sequential()
 clmodel.add(TimeDistributed(Conv1D(filters=64, kernel_size=2, activation='relu'), input_shape=(None, 5, 1)))
@@ -345,6 +346,7 @@ clmodel.add(TimeDistributed(Flatten()))
 clmodel.add(LSTM(50, activation='relu'))
 clmodel.add(Dense(1))
 clmodel.compile(optimizer='adam', loss='mse', metrics=[keras.metrics.MeanAbsoluteError()])
+print("Model Summary")
 print(clmodel.summary())
 
 model_json=clmodel.to_json()
@@ -355,20 +357,24 @@ with open("model.json","w") as json_file:
 
 n_columns=11
 for i in range(len(stateNames)-1):
-  print(stateNames[i])
+  print("\n\n---------------------------\n",stateNames[i],"\n---------------------------")
   tmp_dict={}
   s_df=df[df['State_Name']==stateNames[i]]
+  years=s_df.Crop_Year.unique();
+  print(years)
   print(s_df)
   s_df=s_df[['Max Temperature','Min Temperature','Temperature','Heat Index','Precipitation','Wind Speed','Visibility','Cloud Cover','Relative Humidity','Area','Production']]
   s_df.columns=['Max Temperature','Min Temperature','Temperature','Heat Index','Precipitation','Wind Speed','Visibility','Cloud Cover','Relative Humidity','Area','Production']
   values = s_df.values
-  plt.figure(figsize=(5, 15))
+  plt.figure(figsize=(10, 25))
   for j in range(n_columns):
     tmp_dict[s_df.columns[j]]=values[:,j]
     plt.subplot(n_columns, 1, j+1)
-    plt.plot(values[:,j])
-    plt.title(s_df.columns[j],y=.7,loc='right')
-  plt.tight_layout()
+    plt.plot(years,values[:,j])
+    plt.title(s_df.columns[j],y=.5,loc='right')
+  #plt.tight_layout()
+  spttl="Plot of different statistics for "+stateNames[i]+" in different years"
+  plt.suptitle(spttl)
   plt.show() 
   dict_file[stateNames[i]]=tmp_dict
   print(s_df.shape)
@@ -392,12 +398,15 @@ for i in range(len(stateNames)-1):
   print(x_train.shape)
   print(x_test.shape)
   print("Training the model for ",stateNames[i])
-  clmodel.fit(x_train, y_train, epochs=10, verbose=1)
+  clmodel.fit(x_train, y_train, epochs=10, verbose=2)
   print("Evaluating Model")
   result=clmodel.evaluate(x_test,y_test,verbose=1)
-  print("Root Mean Squred Error = ",result[1])
+  print("Mean Absolute Error = ",result[1])
   print("Making Prediction for given Test Dataset")
   cl_pred=clmodel.predict(x_test)
+  wt=clmodel.get_weights()
+  print("weights")
+  print(wt)
   cl_pred=cl_pred.reshape(x_test.shape[0],)
   print("Predicted")
   print(cl_pred)
@@ -410,8 +419,8 @@ for i in range(len(stateNames)-1):
   		c='_'
   	filePath+=stateNames[i][k]'''
   filePath+=stateNames[i]
-  filePath+='_model.h5'
-  clmodel.save_weights(filePath)
+  filePath+='_model.hdf5'
+  clmodel.save(filePath)
 
 dict_file
 
