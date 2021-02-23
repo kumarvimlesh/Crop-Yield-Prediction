@@ -355,8 +355,9 @@ with open("model.json","w") as json_file:
 
 """# Training for all States"""
 
+mae=[]
 n_columns=11
-for i in range(len(stateNames)-1):
+for i in range(len(stateNames)):
   print("\n\n---------------------------\n",stateNames[i],"\n---------------------------")
   tmp_dict={}
   s_df=df[df['State_Name']==stateNames[i]]
@@ -366,7 +367,7 @@ for i in range(len(stateNames)-1):
   s_df=s_df[['Max Temperature','Min Temperature','Temperature','Heat Index','Precipitation','Wind Speed','Visibility','Cloud Cover','Relative Humidity','Area','Production']]
   s_df.columns=['Max Temperature','Min Temperature','Temperature','Heat Index','Precipitation','Wind Speed','Visibility','Cloud Cover','Relative Humidity','Area','Production']
   values = s_df.values
-  plt.figure(figsize=(10, 25))
+  plt.figure(figsize=(8, 20))
   for j in range(n_columns):
     tmp_dict[s_df.columns[j]]=values[:,j]
     plt.subplot(n_columns, 1, j+1)
@@ -398,20 +399,39 @@ for i in range(len(stateNames)-1):
   print(x_train.shape)
   print(x_test.shape)
   print("Training the model for ",stateNames[i])
-  clmodel.fit(x_train, y_train, epochs=10, verbose=2)
+  history=clmodel.fit(x_train, y_train, epochs=2000, verbose=1)
   print("Evaluating Model")
-  result=clmodel.evaluate(x_test,y_test,verbose=1)
-  print("Mean Absolute Error = ",result[1])
+  eval=clmodel.evaluate(x_test,y_test,verbose=1)
+  mae.append(eval[1])
+  print(mae)
+  print(len(mae))
+  print("Model Loss")
+  print(history.history.keys())
+  #plt.plot(history.history['loss'])
+  plt.plot(history.history['mean_absolute_error'])
+  modelLossTitle="Training Model Loss for "+stateNames[i]+""
+  plt.title(modelLossTitle)
+  plt.ylabel("Loss")
+  plt.xlabel('Epochs')
+  plt.legend(['train'],loc='upper left')
+  plt.show()
+  print("Mean Absolute Error = ",eval[1])
   print("Making Prediction for given Test Dataset")
   cl_pred=clmodel.predict(x_test)
   wt=clmodel.get_weights()
-  print("weights")
-  print(wt)
+  #print("weights")
+  #print(wt)
   cl_pred=cl_pred.reshape(x_test.shape[0],)
   print("Predicted")
   print(cl_pred)
   print("\nReal")
   print(y_test)
+  plt.figure(figsize=(10,10))
+  plt.plot(y_test)
+  plt.plot(cl_pred) 
+  plt.title(stateNames[i])
+  plt.legend(['Real','Predicted'])
+  plt.show()
   filePath='weights/'
   '''for k in range(len(stateNames[i])):
   	c=stateNames[i][k]
@@ -422,6 +442,12 @@ for i in range(len(stateNames)-1):
   filePath+='_model.hdf5'
   clmodel.save(filePath)
 
+plt.figure(figsize=(50, 6))
+plt.plot(mae)
+plt.title('Mean Absolute Error')
+plt.ylabel("Mean Absolute Error")
+plt.xlabel('State Number')
+plt.show()
 dict_file
 
 #with open("json_file.json","w") as json_file:
